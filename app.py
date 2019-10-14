@@ -22,8 +22,8 @@ def load_user(user_id):
 
 
 class LoginForm(FlaskForm):
-    uname = StringField('uname', validators=[InputRequired(), Length(min=4, max=15)])
-    pword = PasswordField('pword', validators=[InputRequired(), Length(min=8, max=80)])
+    uname = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    pword = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
 
 
 class Spell_checkForm(FlaskForm):
@@ -32,8 +32,8 @@ class Spell_checkForm(FlaskForm):
 
 class RegisterForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
-    uname = StringField('uname', validators=[InputRequired(), Length(min=4, max=15)])
-    pword = PasswordField('pword', validators=[InputRequired(), Length(min=8, max=80)])
+    uname = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    pword = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
 
 
 @app.route('/')
@@ -60,7 +60,7 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def signup():
     form = RegisterForm()
 
