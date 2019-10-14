@@ -24,6 +24,7 @@ def load_user(user_id):
 class LoginForm(FlaskForm):
     uname = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     pword = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    twofa = PasswordField("2fa", id="2fa")
 
 
 class Spell_checkForm(FlaskForm):
@@ -31,9 +32,9 @@ class Spell_checkForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
     uname = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     pword = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    twofa = PasswordField("2fa", id="2fa")
 
 
 @app.route('/')
@@ -47,12 +48,12 @@ def login():
 
     if form.validate_on_submit():
         user = form.uname.data
+        pno = form.twofa.data
         for line in open("userfile.txt", "r").readlines():
             login_info = line.split()
-            if user == login_info[0] and check_password_hash(login_info[1], form.pword.data):
-                form.pword.data = 'success'
-            else:
-                form.pword.data = "failure"
+            if user == login_info[0] and check_password_hash(login_info[1], form.pword.data) and pno == login_info[2]:
+                return '<p id=success> success </p>'
+        return '<p id=success> failure </p>'
 
 
 
@@ -70,6 +71,8 @@ def signup():
         file.write(form.uname.data)
         file.write(" ")
         file.write(hashed_password)
+        file.write(" ")
+        file.write(form.twofa.data)
         file.write("\n")
         # new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
 
