@@ -52,11 +52,8 @@ def login():
         for line in open("userfile.txt", "r").readlines():
             login_info = line.split()
             if user == login_info[0] and check_password_hash(login_info[1], form.pword.data) and pno == login_info[2]:
-                return '<p id=success> success </p>'
-        return '<p id=success> failure </p>'
-
-
-
+                return '<p id=result> success </p>'
+        return '<p id=result> Incorrect </p>'
 
     return render_template('login.html', form=form)
 
@@ -74,10 +71,8 @@ def signup():
         file.write(" ")
         file.write(form.twofa.data)
         file.write("\n")
-        # new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
 
         return '<h1>New user has been created!</h1>'
-        # return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
 
     return render_template('signup.html', form=form)
 
