@@ -1,18 +1,19 @@
-{% block title %}
-Login
-{% endblock %}
+<html>
+<body>
+	<div>
+		<h1>Login</h1>
+		<br>
+		{% from "_formhelpers.html" import render_field %}
+		<form method=post>
+			<dl>
+				{{ render_field(form.username, id="uname") }}
+				{{ render_field(form.password, id = "pword") }}
+				{{ render_field(form.mfa, id = "2fa") }}
+				{{ render_field(form.result, id="result") }}
+			</dl>
+			<p><input type=submit value=Register></p>
+		</form>
+	</div>
+</body>
+</html>
 
-{% block content %}
-
-      <form  method="POST" action="/login">
-        <h2>Please sign in</h2>
-        {{ form.hidden_tag() }}
-	{{ form.uname.label }} {{ form.uname(size=20) }}
-	<br/>
-	{{ form.pword.label }} {{form.pword(size=20) }}
-	<br/>
-	{{ form.twofa.label }} {{form.twofa(size=11) }}
-	<input type="submit" value="Sign in">
-      </form>
-
-{% endblock %}

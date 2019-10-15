@@ -1,0 +1,27 @@
+
+
+<html>
+
+
+<body>
+	<div>
+		<h1>Register</h1>
+		<br>
+		{% from "_formhelpers.html" import render_field %}
+		<form method=post>
+			<dl>
+				{{  render_field(form.username, id="uname")  }}
+				{{  render_field(form.password, id="pword")  }}
+				{{  render_field(form.mfa, id="2fa")  }}
+
+			
+			</dl>
+			<p><input type=submit value=Register></p>
+			
+		</form>
+
+
+	</div>
+</body>
+</html>
+ 

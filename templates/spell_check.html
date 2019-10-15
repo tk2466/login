@@ -1,0 +1,18 @@
+<html>
+<body>
+	<div>
+		<h1>Spell Check</h1>
+		<br>
+		{% from "_formhelpers.html" import render_field %}
+		<form method=post>
+			<dl>
+				{{ render_field(form.inputtext, id="inputtext") }}
+				{{ render_field(form.textout, id="textout") }}
+				{{ render_field(form.misspelled, id="misspelled") }}
+			</dl>
+			<p><input type=submit value=Check></p>
+		</form>
+	</div>
+</body>
+</html>
+
