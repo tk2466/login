@@ -86,8 +86,7 @@ def spell_check():
         inputtext = form.inputtext.data
         with open("word.txt", "w+") as f:
             print(inputtext, file=f)
-            textout = subprocess.run(["./a.out", "word.txt", "wordlist.txt"], check=True, stdout=subprocess.PIPE,
-                                     universal_newlines=True)
+            textout = subprocess.run(["./a.out", "word.txt", "wordlist.txt"], check=True, stdout=subprocess.PIPE, universal_newlines=True)
             result = textout.stdout
             with open("output.txt", "w+") as k:
                 print(result, file=k)
@@ -98,12 +97,6 @@ def spell_check():
                             return word
 
     return render_template('spellcheck.html', form=form)
-
-
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    return render_template('dashboard.html', name=current_user.username)
 
 
 if __name__ == '__main__':
