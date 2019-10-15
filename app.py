@@ -24,11 +24,11 @@ def load_user(user_id):
 class LoginForm(FlaskForm):
     uname = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     pword = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
-    twofa = PasswordField("2fa", id="2fa")
+    twofa = PasswordField('2fa', id="2fa")
 
 
 class Spell_checkForm(FlaskForm):
-    words = StringField('Enter text for Spell Check', validators=[InputRequired(), Length(min=3, max=50)])
+    inputtext = StringField('Enter text for Spell Check', id="inputtext")
 
 
 class RegisterForm(FlaskForm):
@@ -72,7 +72,7 @@ def signup():
         file.write(form.twofa.data)
         file.write("\n")
 
-        return '<h1>New user has been created!</h1>'
+        return '<p id=success> success </p>'
 
     return render_template('signup.html', form=form)
 
@@ -83,12 +83,12 @@ def spell_check():
     form = Spell_checkForm()
 
     if form.validate_on_submit():
-        spell = form.words.data
-        with open("word.txt", "w") as f:
-            print(spell, file=f)
-            output = subprocess.run(["./a.out", "word.txt", "wordlist.txt"], check=True, stdout=subprocess.PIPE,
-                                    universal_newlines=True)
-            result = output.stdout
+        inputtext = form.inputtext.data
+        with open("word.txt", "w+") as f:
+            print(inputtext, file=f)
+            textout = subprocess.run(["./a.out", "word.txt", "wordlist.txt"], check=True, stdout=subprocess.PIPE,
+                                     universal_newlines=True)
+            result = textout.stdout
             with open("output.txt", "w+") as k:
                 print(result, file=k)
                 k.close()
