@@ -51,11 +51,15 @@ def login():
         pno = form.twofa.data
         for line in open("userfile.txt", "r").readlines():
             login_info = line.split()
-            if user == login_info[0] and check_password_hash(login_info[1], form.pword.data):
-                if pno == login_info[2]:
-                    return '<p id=result> success </p>'
+            if len(login_info) == 3:
+                if user == login_info[0] and check_password_hash(login_info[1], form.pword.data):
+                    if pno == login_info[2]:
+                        return '<p id=result> success </p>'
                 else:
                     return '<p id=result> Two-Factor failure </p>'
+            else:
+                if user == login_info[0] and check_password_hash(login_info[1], form.pword.data):
+                    return '<p id=result> success </p>'
 
         return '<p id=result> Incorrect </p>'
 
@@ -90,8 +94,7 @@ def spell_check():
         inputtext = form.inputtext.data
         with open("word.txt", "w+") as f:
             print(inputtext, file=f)
-            textout = subprocess.run(["./a.out", "word.txt", "wordlist.txt"], check=True, stdout=subprocess.PIPE,
-                                     universal_newlines=True)
+            textout = subprocess.run(["./a.out", "word.txt", "wordlist.txt"], check=True, stdout=subprocess.PIPE, universal_newlines=True)
             result = textout.stdout
             with open("output.txt", "w+") as k:
                 print(result, file=k)
