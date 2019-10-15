@@ -1,111 +1,117 @@
-from flask import Flask, render_template, redirect, url_for
-from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import InputRequired, Email, Length
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-import os
+from flask import Flask, render_template, request, redirect
+from wtforms import Form, BooleanField, StringField, PasswordField, validators
+from wtforms.widgets import TextArea
+from passlib.hash import sha256_crypt
+import flask_login
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 import subprocess
+from subprocess import check_output
+
+#User Variable to store entries
+Users = { }
+
+class RegistrationForm(Form):
+    username = StringField('Username', [validators.Length(min=4, max=25)])
+    password = PasswordField('New Password', [
+            validators.DataRequired(),
+            validators.length(min=6, max=20)
+        ])
+    mfa = StringField('mfa', [validators.DataRequired(), validators.Length(min=10, max=20)])
+
+class UserLoginForm(Form):
+    username = StringField('Username', [validators.DataRequired()])
+    password = PasswordField('Password', [validators.DataRequired()])
+    mfa = StringField('mfa', [validators.DataRequired()])
+    result = StringField('result')
+
+class SpellCheckForm(Form):
+    inputtext = StringField(u'inputtext', widget=TextArea())
+    textout = StringField(u'textout', widget=TextArea())
+    misspelled = StringField(u'misspelled', widget=TextArea())
+
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'S3cr3t$'
-bootstrap = Bootstrap(app)
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
+app.config['SESSION_TYPE'] = 'memcached'
+app.config['SECRET_KEY'] = 'super secret key'
 
+#Login Manager
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+
+class User(flask_login.UserMixin):
+    pass
 
 @login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+def user_loader(username):
+    if username not in Users:
+        return
+    user = User()
+    user.id = username
+    return user
 
-
-class LoginForm(FlaskForm):
-    uname = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
-    pword = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
-    twofa = PasswordField('2fa', id="2fa")
-
-
-class Spell_checkForm(FlaskForm):
-    inputtext = StringField('Enter text for Spell Check', id="inputtext")
-
-
-class RegisterForm(FlaskForm):
-    uname = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
-    pword = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
-    twofa = PasswordField("2fa", id="2fa")
+@login_manager.request_loader
+def request_loader(request):
+    username = request.form.get('username')
+    if username not in Users:
+        return
+    user = User()
+    user.id = username
+    user.is_authenticated = sha256_crypt.verify(password, Users[username]['password'])
 
 
 @app.route('/')
-def index():
-    return render_template('index.html')
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-
-    if form.validate_on_submit():
-        user = form.uname.data
-        pno = form.twofa.data
-        for line in open("userfile.txt", "r").readlines():
-            login_info = line.split()
-            if len(login_info) == 3:
-                if user == login_info[0] and check_password_hash(login_info[1], form.pword.data):
-                    if pno == login_info[2]:
-                        return '<p id=result> success </p>'
-                else:
-                    return '<p id=result> Two-Factor failure </p>'
-            else:
-                if user == login_info[0] and check_password_hash(login_info[1], form.pword.data):
-                    return '<p id=result> success </p>'
-
-        return '<p id=result> Incorrect </p>'
-
-    return render_template('login.html', form=form)
+@app.route('/index')
+def mainpage(user=None):
+    user = user
+    return render_template('index.html', user=user)
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def signup():
-    form = RegisterForm()
+def register():
+    form = RegistrationForm(request.form)
+    if request.method ==  'POST' and form.validate():
+        username = form.username.data
+        password = sha256_crypt.encrypt(form.password.data)
+        mfa = form.mfa.data
+        if username in Users:
+            form.username.data = 'user already exists'
+            return reinder_template('register.html', form=form)
+        Users[username] = {'password': password, 'mfa': mfa}
+        return redirect('/login')
+    return render_template('register.html', form=form)
 
-    if form.validate_on_submit():
-        hashed_password = generate_password_hash(form.pword.data, method='sha256')
-        file = open("userfile.txt", "a")
-        file.write(form.uname.data)
-        file.write(" ")
-        file.write(hashed_password)
-        file.write(" ")
-        file.write(form.twofa.data)
-        file.write("\n")
-
-        return '<p id=success> success </p>'
-
-    return render_template('signup.html', form=form)
-
-
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = UserLoginForm(request.form)
+    if request.method == 'POST':
+       username = form.username.data
+       password = form.password.data
+       mfa = form.mfa.data
+       if (username not in Users):
+           form.result.data = "incorrect"
+           return render_template('login.html', form=form)
+       if (not sha256_crypt.verify(password, Users[username]['password'])):
+           form.result.data = "incorrect"
+           return render_template('login.html', form=form)
+       if (mfa != Users[username]['mfa']):
+           form.result.data = "Two-factor failure"
+           return render_template('login.html', form=form)
+       user = User()
+       user.id = username
+       flask_login.login_user(user)
+       form.result.data = "success"
+       #return redirect('/spell_check')
+    return render_template('login.html', form=form)
+           
 @app.route('/spell_check', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def spell_check():
-    form = Spell_checkForm()
-
-    if form.validate_on_submit():
+    form = SpellCheckForm(request.form)
+    if request.method == 'POST':
         inputtext = form.inputtext.data
-        with open("word.txt", "w+") as f:
-            print(inputtext, file=f)
-            textout = subprocess.run(["./a.out", "word.txt", "wordlist.txt"], check=True, stdout=subprocess.PIPE, universal_newlines=True)
-            result = textout.stdout
-            with open("output.txt", "w+") as k:
-                print(result, file=k)
-                k.close()
-                with open('output.txt', 'r') as j:
-                    for line in j:
-                        for word in line.split():
-                            return word
-
-    return render_template('spellcheck.html', form=form)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        form.textout.data = inputtext
+        with open("words.txt", "w") as fo:
+            fo.write(inputtext)      
+        output = (check_output(["./a.out", "words.txt", "wordlist.txt"], universal_newlines=True))
+        form.misspelled.data = output.replace("\n", ",").strip().strip(',')
+    return render_template('spell_check.html', form=form)
