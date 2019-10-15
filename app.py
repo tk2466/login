@@ -51,9 +51,12 @@ def login():
         pno = form.twofa.data
         for line in open("userfile.txt", "r").readlines():
             login_info = line.split()
-            if user == login_info[0] and check_password_hash(login_info[1], form.pword.data) and pno == login_info[2]:
-                return '<p id=result> success </p>'
-        return '<p id=result> Incorrect </p>'
+            if user == login_info[0] and check_password_hash(login_info[1], form.pword.data):
+                if pno == login_info[2]:
+                    return '<p id=result> success </p>'
+                else:
+                    return '<p id=result> Two-Factor failure </p>'
+            return '<p id=result> Incorrect </p>'
 
     return render_template('login.html', form=form)
 
