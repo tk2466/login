@@ -75,11 +75,11 @@ def register():
         password = sha256_crypt.encrypt(form.password.data)
         mfa = form.mfa.data
         if username in Users:
-            form.success.data = 'failure'
+            form.success.data = "failure"
             form.username.data = 'user already exists'
             return reinder_template('register.html', form=form)
         Users[username] = {'password': password, 'mfa': mfa}
-        form.success.data = 'success'
+        form.success.data = "success"
         return redirect('/login')
     return render_template('register.html', form=form)
 
