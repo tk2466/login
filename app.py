@@ -89,7 +89,7 @@ def register():
             return reinder_template('register.html', form=form)
         Users[username] = {'password': password, 'mfa': mfa}
         # return redirect('/login')
-        form.success.data = 'success'
+        # form.success.data = 'success'
     return render_template('register.html', form=form)
 
 
