@@ -85,7 +85,7 @@ def register():
         mfa = form.mfa.data
         if username in Users:
             form.username.data = 'user already exists'
-            return reinder_template('register.html', form=form)
+            return render_template('register.html', form=form)
         Users[username] = {'password': password, 'mfa': mfa}
         return '<p id=success> success </p>'
         # return redirect('/login')
