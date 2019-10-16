@@ -26,7 +26,7 @@ class UserLoginForm(Form):
     username = StringField('Username', [validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired()])
     mfa = StringField('mfa', [validators.DataRequired()])
-    result = StringField('result')
+    # result = StringField('result')
 
 
 class SpellCheckForm(Form):
@@ -107,18 +107,18 @@ def login():
         password = form.password.data
         mfa = form.mfa.data
         if (username not in Users):
-            result = "incorrect"
+            result = 'incorrect'
             return render_template('login.html', form=form)
         if (not sha256_crypt.verify(password, Users[username]['password'])):
             result = "incorrect"
             return render_template('login.html', form=form)
         if (mfa != Users[username]['mfa']):
-            result = "Two-factor failure"
+            result = 'Two-factor failure'
             return render_template('login.html', form=form)
         user = User()
         user.id = username
         flask_login.login_user(user)
-        result = "success"
+        result = 'success'
         # return redirect('/spell_check')
 
     return render_template('login.html', form=form, result=result)
