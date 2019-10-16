@@ -19,7 +19,7 @@ class RegistrationForm(Form):
         validators.length(min=6, max=20)
     ])
     mfa = StringField('mfa', [validators.DataRequired(), validators.Length(min=10, max=20)])
-    success = StringField('success', id='success')
+    # success = StringField('success', id='success')
 
 
 class UserLoginForm(Form):
