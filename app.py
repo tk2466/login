@@ -78,44 +78,47 @@ def mainpage(user=None):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    success = None
     form = RegistrationForm(request.form)
     if request.method == 'POST' and form.validate():
         username = form.username.data
         password = sha256_crypt.encrypt(form.password.data)
         mfa = form.mfa.data
         if username in Users:
-            form.username.data = 'user already exists'
+            success = 'failure'
             return render_template('register.html', form=form)
         Users[username] = {'password': password, 'mfa': mfa}
-        return '<p id=success> success </p>'
+        success = 'success'
+
         # return redirect('/login')
 
-    return render_template('register.html', form=form)
+    return render_template('register.html', form=form, success=success)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    result = None
     form = UserLoginForm(request.form)
     if request.method == 'POST':
         username = form.username.data
         password = form.password.data
         mfa = form.mfa.data
         if (username not in Users):
-            form.result.data = "incorrect"
+            result = "incorrect"
             return render_template('login.html', form=form)
         if (not sha256_crypt.verify(password, Users[username]['password'])):
-            form.result.data = "incorrect"
+            result = "incorrect"
             return render_template('login.html', form=form)
         if (mfa != Users[username]['mfa']):
-            form.result.data = "Two-factor failure"
+            result = "Two-factor failure"
             return render_template('login.html', form=form)
         user = User()
         user.id = username
         flask_login.login_user(user)
-        form.result.data = "success"
+        result = "success"
         # return redirect('/spell_check')
 
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, result=result)
 
 
 @app.route('/spell_check', methods=['GET', 'POST'])
