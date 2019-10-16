@@ -51,7 +51,7 @@ class User(flask_login.UserMixin):
     pass
     # @self.is_authenticated.setter
     # def is_authenticated(self, value):
-        # self.is_authenticated = value
+    # self.is_authenticated = value
 
 
 @login_manager.user_loader
@@ -64,13 +64,12 @@ def user_loader(username):
 
 
 @login_manager.request_loader
-def request_loader(request, password=None):
-    username = request.form.get('username')
+def request_loader(username):
     if username not in Users:
         return
     user = User()
     user.id = username
-    user.is_authenticated = sha256_crypt.verify(password, Users[username]['password'])
+    return user
 
 
 @app.route('/')
