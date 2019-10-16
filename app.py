@@ -87,7 +87,8 @@ def register():
             form.username.data = 'user already exists'
             return reinder_template('register.html', form=form)
         Users[username] = {'password': password, 'mfa': mfa}
-        return redirect('/login')
+        return '<p id=success> success </p>'
+        # return redirect('/login')
 
     return render_template('register.html', form=form)
 
