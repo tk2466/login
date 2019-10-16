@@ -13,10 +13,7 @@ Users = {}
 
 class RegistrationForm(Form):
     username = StringField('Username', [validators.Length(min=4, max=25)])
-    password = PasswordField('New Password', [
-        validators.DataRequired(),
-        validators.length(min=6, max=20)
-    ])
+    password = PasswordField('New Password', [validators.DataRequired(), validators.length(min=6, max=20)])
     mfa = StringField('mfa', [validators.DataRequired(), validators.Length(min=10, max=20)])
     success = StringField('success')
 
