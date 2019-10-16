@@ -63,7 +63,7 @@ def request_loader(request):
         return
     user = User()
     user.id = username
-    user.is_authenticated = sha256_crypt.verify(password, Users[username]['password'])
+    #user.is_authenticated = sha256_crypt.verify(password, Users[username]['password'])
 
 
 @app.route('/')
