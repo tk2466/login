@@ -1,3 +1,4 @@
+import self as self
 from flask import Flask, render_template, request, redirect, make_response
 from wtforms import Form, BooleanField, StringField, PasswordField, validators
 from wtforms.widgets import TextArea
@@ -48,6 +49,9 @@ login_manager.init_app(app)
 
 class User(flask_login.UserMixin):
     pass
+    # @self.is_authenticated.setter
+    # def is_authenticated(self, value):
+        # self.is_authenticated = value
 
 
 @login_manager.user_loader
@@ -60,7 +64,7 @@ def user_loader(username):
 
 
 @login_manager.request_loader
-def request_loader(request):
+def request_loader(request, password=None):
     username = request.form.get('username')
     if username not in Users:
         return
