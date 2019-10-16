@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, make_response
 from wtforms import Form, BooleanField, StringField, PasswordField, validators
 from wtforms.widgets import TextArea
 from passlib.hash import sha256_crypt
@@ -114,6 +114,7 @@ def login():
         flask_login.login_user(user)
         form.result.data = "success"
         # return redirect('/spell_check')
+
     return render_template('login.html', form=form)
 
 
@@ -129,5 +130,5 @@ def spell_check():
         output = (check_output(["./a.out", "words.txt", "wordlist.txt"], universal_newlines=True))
         form.misspelled.data = output.replace("\n", ", ").strip().strip(',')
     response = make_response(render_template('spell_check.html', form=form))
-    response.headers['Content-Security-Policy'] = "default-src 'self'"
+    # response.headers['Content-Security-Policy'] = "default-src 'self'"
     return response
