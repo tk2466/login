@@ -37,7 +37,7 @@ class SpellCheckForm(Form):
 
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'memcached'
-app.config['SECRET_KEY'] = 's3cr3t'
+app.config['SECRET_KEY'] = 'IjA0OGVhMzdmOTljMjEzOWY0ZGFlOGUyYzgyMjIwMWY5YjI1MmQ1YmEi.Xaihkw.DX4YlQQczooa57cVf53DOg8I0po'
 
 csrf = CSRFProtect()
 
