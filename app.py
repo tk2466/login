@@ -1,4 +1,3 @@
-import self as self
 from flask import Flask, render_template, request, redirect, make_response
 from wtforms import Form, BooleanField, StringField, PasswordField, validators
 from wtforms.widgets import TextArea
