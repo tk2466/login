@@ -1,12 +1,13 @@
-from flask import Flask, render_template, request, redirect, make_response
-from wtforms import Form, BooleanField, StringField, PasswordField, validators
-from wtforms.widgets import TextArea
-from passlib.hash import sha256_crypt
-import flask_login
-from flask_login import LoginManager, login_required, login_user, logout_user, current_user
-import subprocess
+from flask import Flask, render_template, request, make_response
 from subprocess import check_output
-from flask_wtf.csrf import CSRFProtect
+
+import flask_login
+from flask import Flask, render_template, request, make_response
+from flask_login import login_required
+from passlib.hash import sha256_crypt
+from wtforms import Form, StringField, PasswordField, validators
+from wtforms.widgets import TextArea
+from flask_wtf.csrf import CsrfProtect
 
 # User Variable to store entries
 Users = {}
@@ -36,7 +37,8 @@ class SpellCheckForm(Form):
 
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'memcached'
-app.config['SECRET_KEY'] = 'super secret key'
+app.config['SECRET_KEY'] = 's3cr3t'
+CsrfProtect(app)
 
 # Login Manager
 login_manager = flask_login.LoginManager()
