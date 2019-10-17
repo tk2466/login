@@ -31,8 +31,8 @@ class UserLoginForm(Form):
 
 class SpellCheckForm(Form):
     inputtext = StringField(u'inputtext', widget=TextArea())
-    textout = StringField(u'textout', widget=TextArea())
-    misspelled = StringField(u'misspelled', widget=TextArea())
+    # textout = StringField(u'textout', widget=TextArea())
+    # misspelled = StringField(u'misspelled', widget=TextArea())
 
 
 app = Flask(__name__)
@@ -127,14 +127,16 @@ def login():
 @app.route('/spell_check', methods=['GET', 'POST'])
 @login_required
 def spell_check():
+    textout = None
+    misspelled = None
     form = SpellCheckForm(request.form)
     if request.method == 'POST':
         inputtext = form.inputtext.data
-        form.textout.data = inputtext
+        textout = inputtext
         with open("words.txt", "w") as fo:
             fo.write(inputtext)
         output = (check_output(["./a.out", "words.txt", "wordlist.txt"], universal_newlines=True))
-        form.misspelled.data = output.replace("\n", ", ").strip().strip(',')
-    response = make_response(render_template('spell_check.html', form=form))
+        misspelled = output.replace("\n", ", ").strip().strip(',')
+    response = make_response(render_template('spell_check.html', form=form, textout=textout, misspelled=misspelled))
     # response.headers['Content-Security-Policy'] = "default-src 'self'"
     return response
