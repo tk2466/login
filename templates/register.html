@@ -8,7 +8,8 @@
 		<h1>Register</h1>
 		<br>
 		{% from "_formhelpers.html" import render_field %}
-		<form method=post>
+		<form method="post">
+			<input type="hidden" name="csrf_token" id="csrf_token"
 			<dl>
 				{{ form.csrf_token }}
 				{{  render_field(form.username, id="uname")  }}

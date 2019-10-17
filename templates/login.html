@@ -4,14 +4,15 @@
 		<h1>Login</h1>
 		<br>
 		{% from "_formhelpers.html" import render_field %}
-		<form method=post>
+		<form method="post">
+			<input type="hidden" name="csrf_token" id="csrf_token"
 			<dl>
 				{{ form.csrf_token }}
 				{{ render_field(form.username, id="uname") }}
 				{{ render_field(form.password, id = "pword") }}
 				{{ render_field(form.mfa, id = "2fa") }}
 			</dl>
-			<p><input type=submit value=Register></p>
+			<p><input type=submit value=Login></p>
 			<p id="result"> {{ result }} </p>
 		</form>
 	</div>
