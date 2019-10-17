@@ -7,7 +7,7 @@ from flask_login import login_required
 from passlib.hash import sha256_crypt
 from wtforms import Form, StringField, PasswordField, validators
 from wtforms.widgets import TextArea
-from flask_wtf.csrf import CsrfProtect
+from flask_wtf.csrf import CsrfProtect, CSRFProtect
 
 # User Variable to store entries
 Users = {}
@@ -38,15 +38,16 @@ class SpellCheckForm(Form):
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'memcached'
 app.config['SECRET_KEY'] = 's3cr3t'
-# CsrfProtect(app)
+CsrfProtect(app)
 
 # Login Manager
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
-
 # CSRF Protect
-# csrf = CSRFProtect(app)
+csrf = CSRFProtect(app)
+csrf.init_app(app)
+
 
 class User(flask_login.UserMixin):
     pass
