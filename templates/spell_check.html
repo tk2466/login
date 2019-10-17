@@ -7,10 +7,10 @@
 		<form method=post>
 			<dl>
 				{{ render_field(form.inputtext, id="inputtext") }}
-				{{ render_field(form.textout, id="textout") }}
-				{{ render_field(form.misspelled, id="misspelled") }}
 			</dl>
 			<p><input type=submit value=Check></p>
+			<p id="textout"> {{ textout }} </p>
+			<p id="misspelled"> {{ misspelled }} </p>
 		</form>
 	</div>
 </body>
