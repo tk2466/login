@@ -9,7 +9,6 @@ from wtforms import Form, StringField, PasswordField, validators
 from wtforms.widgets import TextArea
 from flask_wtf.csrf import CsrfProtect, CSRFProtect
 
-# User Variable to store entries
 Users = {}
 
 
@@ -26,23 +25,20 @@ class UserLoginForm(Form):
     username = StringField('Username', [validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired()])
     mfa = StringField('mfa', [validators.DataRequired()])
-    # result = StringField('result')
 
 
 class SpellCheckForm(Form):
     inputtext = StringField(u'inputtext', widget=TextArea())
-    # textout = StringField(u'textout', widget=TextArea())
-    # misspelled = StringField(u'misspelled', widget=TextArea())
 
 
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'memcached'
-app.config['SECRET_KEY'] = 'IjA0OGVhMzdmOTljMjEzOWY0ZGFlOGUyYzgyMjIwMWY5YjI1MmQ1YmEi.Xaihkw.DX4YlQQczooa57cVf53DOg8I0po'
+app.config['SECRET_KEY'] = 's3cr3t'
 
 csrf = CSRFProtect()
+csrf.init_app(app)
 
 
-# Login Manager
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
