@@ -31,12 +31,13 @@ class SpellCheckForm(Form):
     inputtext = StringField(u'inputtext', widget=TextArea())
 
 
-app = Flask(__name__)
-app.config['SESSION_TYPE'] = 'memcached'
-app.config['SECRET_KEY'] = 's3cr3t'
+# app.config['SESSION_TYPE'] = 'memcached'
+# app.config['SECRET_KEY'] = 's3cr3t'
 
 csrf = CSRFProtect()
-# csrf.init_app(app)
+def create_app():
+    app = Flask(__name__)
+    csrf.init_app(app)
 
 
 login_manager = flask_login.LoginManager()
