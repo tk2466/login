@@ -32,11 +32,12 @@ class SpellCheckForm(Form):
 
 
 app = Flask(__name__)
+
 app.config['SESSION_TYPE'] = 'memcached'
 app.config['SECRET_KEY'] = 's3cr3t'
 
 csrf = CSRFProtect()
-# csrf.init_app(app)
+csrf.init_app(app)
 
 
 login_manager = flask_login.LoginManager()
