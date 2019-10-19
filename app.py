@@ -39,14 +39,8 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
 
-# CSRF Protect
-
-
 class User(flask_login.UserMixin):
     pass
-    # @self.is_authenticated.setter
-    # def is_authenticated(self, value):
-    # self.is_authenticated = value
 
 
 @login_manager.user_loader
@@ -67,13 +61,6 @@ def request_loader(username):
     return user
 
 
-@app.route('/')
-@app.route('/index')
-def mainpage(user=None):
-    user = user
-    return render_template('index.html', user=user)
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     success = None
@@ -87,8 +74,6 @@ def register():
             return render_template('register.html', form=form)
         Users[username] = {'password': password, 'mfa': mfa}
         success = 'success'
-
-        # return redirect('/login')
 
     response = make_response(render_template('register.html', form=form, success=success))
     response.headers['Content-Security-Policy'] = "default-src 'self'"
