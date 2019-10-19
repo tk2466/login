@@ -1,4 +1,3 @@
-from flask import Flask, render_template, request, make_response
 from subprocess import check_output
 
 import flask_login
@@ -7,12 +6,12 @@ from flask_login import login_required
 from passlib.hash import sha256_crypt
 from wtforms import Form, StringField, PasswordField, validators
 from wtforms.widgets import TextArea
-from flask_wtf.csrf import CsrfProtect, CSRFProtect
+from flask_wtf import FlaskForm
 
 Users = {}
 
 
-class RegistrationForm(Form):
+class RegistrationForm(FlaskForm):
     username = StringField('Username', [validators.Length(min=4, max=25)])
     password = PasswordField('New Password', [
         validators.DataRequired(),
@@ -21,13 +20,13 @@ class RegistrationForm(Form):
     mfa = StringField('mfa', [validators.DataRequired(), validators.Length(min=10, max=20)])
 
 
-class UserLoginForm(Form):
+class UserLoginForm(FlaskForm):
     username = StringField('Username', [validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired()])
     mfa = StringField('mfa', [validators.DataRequired()])
 
 
-class SpellCheckForm(Form):
+class SpellCheckForm(FlaskForm):
     inputtext = StringField(u'inputtext', widget=TextArea())
 
 
@@ -35,10 +34,6 @@ app = Flask(__name__)
 
 app.config['SESSION_TYPE'] = 'memcached'
 app.config['SECRET_KEY'] = 's3cr3t'
-
-csrf = CSRFProtect()
-csrf.init_app(app)
-
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
@@ -95,7 +90,9 @@ def register():
 
         # return redirect('/login')
 
-    return render_template('register.html', form=form, success=success)
+    response = make_response(render_template('register.html', form=form, success=success))
+    response.headers['Content-Security-Policy'] = "default-src 'self'"
+    return response
 
 
 @app.route('/login', methods=['GET', 'POST'])
