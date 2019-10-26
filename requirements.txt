@@ -30,3 +30,4 @@ virtualenv==16.7.5
 Werkzeug==0.16.0
 WTForms==2.2.1
 zipp==0.6.0
+beautifulsoup4==4.8.1
